@@ -1,51 +1,91 @@
-class Port:
-  def __init__(self):
+import asyncio
+
+class InPort():
+  def __init__(self, callback):
     '''
 
     '''
-
-
-class InPort(Port):
-  def __init__(self):
-    '''
-
-    '''
-    Port.__init__(self)
+    self.callback = callback
 
 
 class LocalInPort(InPort):
-  def __init__(self):
+  def __init__(self, callback):
     '''
 
     '''
-    InPort.__init__(self)
+    InPort.__init__(self, callback)
+
+  def push(self, msg):
+    self.callback(msg)
+
+
+class LocalInPortAsync(InPort):
+  def __init__(self, callback):
+    '''
+
+    '''
+    InPort.__init__(self, callback)
+    self.queue = asyncio.Queue()
+    self.canceled = False
+
+  def push(self, msg):
+    self.queue.put_nowait(msg)
+
+  async def run(self):
+    while not self.canceled:
+      msg = await self.queue.get()
+      self.callback(msg)
 
 
 class RemoteInPort(InPort):
-  def __init__(self):
+  def __init__(self, callback, marshalling="JSON"):
     '''
 
     '''
-    InPort.__init__(self)
+    InPort.__init__(self, callback)
+    self.marshalling = marshalling
+
+  def push(self, msg):
+    # Implement pushing over network
+    pass
 
 
-class OutPort(Port):
-  def __init__(self):
+class OutPort():
+  def __init__(self, nextPort):
     '''
 
     '''
-    Port.__init__(self)
+    self.nextPort = nextPort
 
-class LocalOutPort(Port):
-  def __init__(self):
+
+class LocalOutPort(OutPort):
+  def __init__(self, nextPort):
     '''
 
     '''
-    Port.__init__(self)
+    OutPort.__init__(self, nextPort)
 
-class RemoteOutPort(Port):
-  def __init__(self):
+  def push(self, msg):
+    self.nextPort.push(msg)
+
+
+class LocalOutPortAsync(OutPort):
+  def __init__(self, nextPort):
     '''
 
     '''
-    Port.__init__(self)
+    OutPort.__init__(self, nextPort)
+
+  def push(self, msg):
+    self.nextPort.push(msg)
+
+
+class RemoteOutPort(OutPort):
+  def __init__(self, remoteIp, remotePort, marshalling="JSON"):
+    '''
+
+    '''
+    OutPort.__init__(self, None)
+    self.marshalling = marshalling
+    self.remoteIp = remoteIp
+    self.remotePort = remotePort

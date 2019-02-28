@@ -22,6 +22,13 @@ class Message:
     '''
     self.frame = frame
 
+  def get_frame(self):
+    '''
+
+    :return:
+    '''
+    return self.frame
+
   def set_argument(self, key, value):
     '''
 
@@ -50,7 +57,7 @@ class Message:
     '''
     return self.arguments
 
-  def marshal(self):
+  def marshalJSON(self):
     '''
 
     :return:
@@ -59,7 +66,24 @@ class Message:
     bytes = None
     return bytes
 
-  def unmarshal(self, bytes):
+  def unmarshalJSON(self, bytes):
+    '''
+
+    :return:
+    '''
+    # Constructs a message from a sequence of bytes
+    pass
+
+  def marshalPickle(self):
+    '''
+
+    :return:
+    '''
+    # Creates a sequence of bytes representing the message
+    pkl = None
+    return pkl
+
+  def unmarshalPickle(self, pkl):
     '''
 
     :return:

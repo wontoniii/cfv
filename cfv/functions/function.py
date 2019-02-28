@@ -1,3 +1,6 @@
+import logging
+import datetime
+
 class Function:
   def __init__(self):
     '''
@@ -14,11 +17,20 @@ class Function:
     '''
     self.outgoing.append(port)
 
+
+  def add_incoming_port(self, port):
+    '''
+
+    :param port:
+    :return:
+    '''
+    self.incoming.append(port)
+
+
   def push(self, frame):
     '''
 
     :param port:
     :return:
     '''
-    print "Received frame"
-    return
+    logging.debug("Received frame at time {}".format(datetime.datetime.now().timestamp()))

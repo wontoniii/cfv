@@ -2,6 +2,7 @@ from cfv.functions.function import Function
 from cfv.net.message import Message
 import logging
 import datetime
+import cv2
 
 class VideoSink(Function):
   def __init__(self):
@@ -16,7 +17,8 @@ class VideoSink(Function):
     :param port:
     :return:
     '''
-    logging.debug("Received frame at time {}. Discarding it".format(datetime.datetime.now().timestamp()))
+    logging.debug("Received frame at time {}. Displaying it".format(datetime.datetime.now().timestamp()))
+    cv2.imshow('video', msg.get_frame())
 
   def run(self):
     '''
