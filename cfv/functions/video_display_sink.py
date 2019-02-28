@@ -20,6 +20,9 @@ class VideoSink(Function):
     logging.debug("Received frame at time {}. Displaying it".format(datetime.datetime.now().timestamp()))
     cv2.imshow('video', msg.get_frame())
 
+    if cv2.waitKey(33) == 27:
+      pass
+
   def run(self):
     '''
 

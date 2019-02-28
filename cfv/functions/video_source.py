@@ -10,7 +10,7 @@ class VideoSource(Function):
 
     '''
     Function.__init__(self)
-    self.video_capture = cv2.VideoCapture(video_src)
+    self.video_source = video_src
 
   def push(self, msg):
     '''
@@ -29,11 +29,13 @@ class VideoSource(Function):
       logging.error("Not out ports set")
       return
 
+    cap = cv2.VideoCapture(self.video_source)
+
     while True:
-      ret, img = self.video_capture.read()
+      ret, img = cap.read()
       if (type(img) == type(None)):
         break
-      gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
       logging.debug("Read frame. ret={}".format(ret))
       msg = Message()
       msg.set_frame(img)
