@@ -35,7 +35,6 @@ class VideoSource(Function):
         break
       gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
       logging.debug("Read frame. ret={}".format(ret))
-      
       msg = Message()
       msg.set_frame(img)
 

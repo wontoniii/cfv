@@ -1,7 +1,7 @@
 # cfv
 Camera Function Virtualization
 
-## Installation Instructions (NOT YET SUPPORTED)
+## Installation Instructions
 
 To install via `pip`:
 
@@ -11,6 +11,11 @@ pip install --user 'git+https://github.com/wontoniii/cfv.git'
 
 Add the `--upgrade` option to update to the latest version.
 
-## Run Instructions
+## Running the included examples
 
-Coming soon...
+First clone the repository to your local device. Once in the repo folder, run:
+
+```
+cd examples
+python vehicle_detection_haarcascades.py
+```
