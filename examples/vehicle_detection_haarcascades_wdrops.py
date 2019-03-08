@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 
-from cfv.functions import video_source, video_display_sink, car_detection
+from cfv.functions import video_source, video_display_sink, car_detection, discard
 from cfv.net.port import LocalInPort, LocalInPortAsync, LocalOutPort, LocalOutPortAsync
 import asyncio
 import logging
@@ -18,8 +18,14 @@ def run():
   ip_cd = LocalInPort(cd.push)
   cd.add_incoming_port(ip_cd)
 
+  drop = discard.Discard()
+  op_drop = LocalOutPort(ip_cd)
+  drop.add_outgoing_port(op_drop)
+  ip_drop = LocalInPort(drop.push)
+  drop.add_incoming_port(ip_drop)
+
   source = video_source.VideoSource("data/video2.avi")
-  op_source = LocalOutPort(ip_cd)
+  op_source = LocalOutPort(ip_drop)
   source.add_outgoing_port(op_source)
   source.run()
 
@@ -42,8 +48,17 @@ async def run_async():
   if len(to_add) > 0:
     tasks.extend(to_add)
 
+  drop = discard.Discard()
+  op_drop = LocalOutPortAsync(ip_cd)
+  drop.add_outgoing_port(op_drop)
+  ip_drop = LocalInPortAsync(drop.push_async)
+  drop.add_incoming_port(ip_drop)
+  to_add = drop.get_async_tasks()
+  if len(to_add) > 0:
+    tasks.extend(to_add)
+
   source = video_source.VideoSource("data/video2.avi")
-  op_source = LocalOutPortAsync(ip_cd)
+  op_source = LocalOutPortAsync(ip_drop)
   source.add_outgoing_port(op_source)
   tasks.append(asyncio.create_task(source.run_async()))
 

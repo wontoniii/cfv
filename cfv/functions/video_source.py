@@ -3,6 +3,9 @@ from cfv.net.message import Message
 import logging
 import datetime
 import cv2
+import asyncio
+import random
+import string
 
 class VideoSource(Function):
   def __init__(self, video_src):
@@ -29,6 +32,8 @@ class VideoSource(Function):
       logging.error("Not out ports set")
       return
 
+    flow_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    logging.info("Generating flow {}".format(flow_id))
     cap = cv2.VideoCapture(self.video_source)
 
     while True:
@@ -39,6 +44,7 @@ class VideoSource(Function):
       logging.debug("Read frame. ret={}".format(ret))
       msg = Message()
       msg.set_frame(img)
+      msg.set_argument("flow_id", flow_id)
 
       self.outgoing[0].push(msg)
 
@@ -47,4 +53,28 @@ class VideoSource(Function):
 
     :return:
     '''
-    self.run()
+    if not len(self.outgoing):
+      logging.error("Not out ports set")
+      return
+
+    flow_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    cap = cv2.VideoCapture(self.video_source)
+
+    async def read_frame():
+      ret, img = cap.read()
+      if (type(img) == type(None)):
+        return None
+
+      logging.debug("Read frame. ret={}.".format(ret))
+      msg = Message()
+      msg.set_frame(img)
+      msg.set_argument("flow_id", flow_id)
+      return msg
+
+    while True:
+      task = asyncio.create_task(read_frame())
+      msg = await task
+      if msg is None:
+        return
+      await self.outgoing[0].push(msg)
+      # logging.debug("Finished waiting. I am {}".format(self.outgoing))

@@ -28,13 +28,15 @@ class LocalInPortAsync(InPort):
     self.queue = asyncio.Queue()
     self.canceled = False
 
-  def push(self, msg):
+  async def push(self, msg):
     self.queue.put_nowait(msg)
 
   async def run(self):
     while not self.canceled:
-      msg = await self.queue.get()
-      self.callback(msg)
+      task = asyncio.create_task(self.queue.get())
+      msg = await task
+      await self.callback(msg)
+      # await asyncio.sleep(0.1)
 
 
 class RemoteInPort(InPort):
@@ -76,8 +78,10 @@ class LocalOutPortAsync(OutPort):
     '''
     OutPort.__init__(self, nextPort)
 
-  def push(self, msg):
-    self.nextPort.push(msg)
+  async def push(self, msg):
+    # print("I'm the out port {}  --{}".format(self.nextPort, self.nextPort.push))
+    await self.nextPort.push(msg)
+    # await asyncio.sleep(0.1)
 
 
 class RemoteOutPort(OutPort):

@@ -48,7 +48,10 @@ class Message:
     :param key:
     :return:
     '''
-    return self.arguments[key]
+    if key not in self.arguments.keys():
+      return None
+    else:
+      return self.arguments[key]
 
   def get_arguments(self):
     '''

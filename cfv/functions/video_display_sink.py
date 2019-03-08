@@ -19,21 +19,14 @@ class VideoSink(Function):
     '''
     logging.debug("Received frame at time {}. Displaying it".format(datetime.datetime.now().timestamp()))
     cv2.imshow('video', msg.get_frame())
+    cv2.waitKey(33)
 
-    if cv2.waitKey(33) == 27:
-      pass
-
-  def run(self):
+  async def push_async(self, msg):
     '''
 
+    :param port:
     :return:
     '''
-    pass
-
-  async def run_async(self):
-    '''
-
-    :return:
-    '''
-    #I guess it should start all incoming ports?
-    pass
+    logging.debug("Received frame at time {}. Displaying it".format(datetime.datetime.now().timestamp()))
+    cv2.imshow('video', msg.get_frame())
+    cv2.waitKey(33)

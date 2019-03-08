@@ -18,17 +18,10 @@ class VideoSink(Function):
     '''
     logging.debug("Received frame at time {}. Discarding it".format(datetime.datetime.now().timestamp()))
 
-  def run(self):
+  async def push_async(self, msg):
     '''
 
+    :param port:
     :return:
     '''
-    pass
-
-  async def run_async(self):
-    '''
-
-    :return:
-    '''
-    #I guess it should start all incoming ports?
-    pass
+    logging.debug("Received frame at time {}. Discarding it".format(datetime.datetime.now().timestamp()))
