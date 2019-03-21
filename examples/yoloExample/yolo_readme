@@ -1,0 +1,12 @@
+Instructions for installing YOLO: https://pjreddie.com/darknet/yolo/
+
+To run the object detector:
+
+cd darknet
+./darknet detect cfg/yolov3.cfg yolov3.weights [image path]
+
+For example: ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+
+To provide image path at runtime, run: ./darknet detect cfg/yolov3.cfg yolov3.weights
+
+
