@@ -1,8 +1,8 @@
 # Instructions for installing YOLO
 
- https://pjreddie.com/darknet/yolo/
+Complete Guide: https://pjreddie.com/darknet/yolo/
 
-To install YOLO:
+## To install YOLO:
 
 ```bash
 git clone https://github.com/pjreddie/darknet
@@ -10,7 +10,7 @@ cd darknet
 make
 ```
 
-Download pre-trained weights:
+## Download pre-trained weights:
 
 ```bash
 wget https://pjreddie.com/media/files/yolov3.weights
