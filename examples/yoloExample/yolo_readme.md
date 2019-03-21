@@ -23,8 +23,15 @@ cd darknet
 ./darknet detect cfg/yolov3.cfg yolov3.weights [image path]
 ```
 
-For example: ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+For example: 
 
-To provide image path at runtime, run: ./darknet detect cfg/yolov3.cfg yolov3.weights
+```
+./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+```
 
+To provide image path at runtime: 
+
+```
+./darknet detect cfg/yolov3.cfg yolov3.weights
+```
 
