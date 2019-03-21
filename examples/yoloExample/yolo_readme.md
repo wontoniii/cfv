@@ -4,7 +4,7 @@
 
 To install YOLO:
 
-``` bash
+```bash
 git clone https://github.com/pjreddie/darknet
 cd darknet
 make
@@ -16,7 +16,7 @@ Download pre-trained weights:
 wget https://pjreddie.com/media/files/yolov3.weights
 ```
 
-# To run the object detector
+## To run the object detector
 
 ```bash
 cd darknet
