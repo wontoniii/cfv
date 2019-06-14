@@ -1,3 +1,4 @@
+import setuptools
 from setuptools import setup
 
 setup(name='cfv',
@@ -7,5 +8,5 @@ setup(name='cfv',
       author='Francesco Bronzino, Shubham Jain',
       author_email='wontoniii@gmail.com',
       license='MIT',
-      packages=['cfv'],
+      packages=setuptools.find_packages(),
       zip_safe=False)
