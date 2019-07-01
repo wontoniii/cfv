@@ -60,7 +60,7 @@ class Message:
     '''
     return self.arguments
 
-  def marshalJSON(self):
+  def marshal_json(self):
     '''
 
     :return:
@@ -69,7 +69,7 @@ class Message:
     bytes = None
     return bytes
 
-  def unmarshalJSON(self, bytes):
+  def unmarshal_json(self, bytes):
     '''
 
     :return:
