@@ -3,13 +3,22 @@ from cfv.net.port import InPort, OutPort
 
 
 class LocalInPort(InPort):
+  '''
+  Incoming port that uses local queues to handle message passing.
+  '''
   def __init__(self, callback):
     '''
-
+    Instantiate a new porrt and set the callback call
+    :param callback: Function to call when a new message is received
     '''
     InPort.__init__(self, callback)
 
   def push(self, msg):
+    '''
+    Pass a message into the port
+    :param msg: Message to pass
+    :return:
+    '''
     self.callback(msg)
 
 

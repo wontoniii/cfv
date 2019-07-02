@@ -1,19 +1,18 @@
 import sys
 sys.path.append("../")
+import asyncio
 
 from cfv.functions import video_source, video_display_sink
-from cfv.net.local_port import LocalInPort, LocalOutPort
+from cfv.net.remote_port import RemoteOutPort
 import logging
 
-def run():
-  sink = video_display_sink.VideoSink()
-  ip_sink = LocalInPort(sink.push)
-  sink.add_incoming_port(ip_sink)
-
+async def run():
   source = video_source.VideoSource("../../vehicle_detection_haarcascades/dataset/video2.avi")
-  op_source = LocalOutPort(ip_sink)
+  op_source = RemoteOutPort("127.0.0.1", 8000)
   source.add_outgoing_port(op_source)
-  source.run()
+
+  await op_source.setup()
+  await source.run_async()
 
 def main():
   logging.basicConfig(
@@ -22,7 +21,7 @@ def main():
     datefmt="%H:%M:%S",
     stream=sys.stderr,
   )
-  run()
+  asyncio.run(run())
 
 if __name__ == "__main__":
   main()

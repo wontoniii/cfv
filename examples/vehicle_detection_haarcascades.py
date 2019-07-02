@@ -2,7 +2,7 @@ import sys
 sys.path.append("../")
 
 from cfv.functions import video_source, video_display_sink, car_detection
-from cfv.net.port import LocalInPort, LocalInPortAsync, LocalOutPort, LocalOutPortAsync
+from cfv.net.local_port import LocalInPort, LocalInPortAsync, LocalOutPort, LocalOutPortAsync
 import asyncio
 import logging
 import argparse

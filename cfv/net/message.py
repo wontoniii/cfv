@@ -1,3 +1,5 @@
+import pickle
+
 class Message:
   def __init__(self):
     '''
@@ -77,19 +79,21 @@ class Message:
     # Constructs a message from a sequence of bytes
     pass
 
-  def marshalPickle(self):
+  def marshal_pickle(self):
     '''
 
     :return:
     '''
     # Creates a sequence of bytes representing the message
-    pkl = None
+    pkl = pickle.dumps({"frame": self.frame, "args": self.arguments})
     return pkl
 
-  def unmarshalPickle(self, pkl):
+  def unmarshal_pickle(self, pkl):
     '''
 
     :return:
     '''
     # Constructs a message from a sequence of bytes
-    pass
+    msg = pickle.loads(pkl)
+    self.frame = msg["frame"]
+    self.arguments = msg["args"]
