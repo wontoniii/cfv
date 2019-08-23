@@ -2,6 +2,8 @@ import asyncio
 import logging
 from cfv.net.port import InPort, OutPort
 from cfv.net.message import Message
+import aiohttp
+from aiohttp import web
 
 
 class RemoteInPort(InPort):
@@ -15,9 +17,9 @@ class RemoteInPort(InPort):
     self.marshalling = marshalling.lower()
     self.host = host
     self.port = port
-    self.reader = None
-    self.writer = None
-    self.event_connection = None
+    self.application = None
+    self.queue = asyncio.Queue()
+
 
   async def setup(self):
     '''
@@ -25,45 +27,46 @@ class RemoteInPort(InPort):
 
     :return:
     '''
-    self.event_connection = asyncio.Event()
-    await asyncio.start_server(self.client_connected, self.host, self.port)
+    self.application = web.Application(client_max_size=1024*1024*10)
+    self.application.add_routes([web.post('/', self.post)])
 
-  async def client_connected(self, reader, writer):
-    '''
 
-    :param reader:
-    :param writer:
-    :return:
-    '''
-    # Log the new client
-    self.reader = reader
-    self.writer = writer
-    logging.debug("Client connected")
-    self.connected = True
-    self.event_connection.set()
+  async def post(self, request):
+    #READ BODY
+    logging.debug("Received new http post")
+    json_body = await request.text()
+    # logging.debug(json_body)
+    msg = Message()
+    msg.unmarshal_json(json_body)
+    logging.debug(msg.get_frame().shape)
+    await self.queue.put(msg)
+    return web.Response(status=200)
+
 
   def is_connected(self):
     '''
     Wait until connection is established
     :return:
     '''
+    #TODO
     if self.connected:
       return True
     else:
       return False
 
-  async def waiter(self, event):
-    await event.wait()
+
+  def get_runners(self):
+    return [web._run_app(self.application), self.run()]
+
 
   async def run(self):
-    if not self.is_connected():
-      logging.debug("Client not yet connected")
-      awaiter_connection = asyncio.create_task(self.waiter(self.event_connection))
-      await awaiter_connection
     while not self.canceled:
-      data = await self.reader.read()
-      msg = self.unmarshall_message(data)
+      logging.debug("Create task for queue")
+      task = asyncio.create_task(self.queue.get())
+      msg = await task
+      logging.debug("Read message from queue")
       await self.callback(msg)
+
 
   def unmarshall_message(self, data):
     '''
@@ -94,8 +97,8 @@ class RemoteOutPort(OutPort):
     self.marshalling = marshalling
     self.remote_ip = remote_ip
     self.remote_port = remote_port
-    self.reader = None
-    self.writer = None
+    self.session = aiohttp.ClientSession()
+
 
   async def setup(self):
     '''
@@ -103,7 +106,8 @@ class RemoteOutPort(OutPort):
 
     :return:
     '''
-    self.reader, self.writer = await asyncio.open_connection(self.remote_ip, self.remote_port)
+    #send an empty message to setup the connection
+
 
   async def push(self, msg):
     '''
@@ -112,14 +116,11 @@ class RemoteOutPort(OutPort):
     :param msg:
     :return:
     '''
-    if self.writer is None:
-      #throw error
-      logging.error("Working without a writer")
-      return
-    elif msg is None:
-      return
-    self.writer.write(self.marshall_message(msg))
-    await self.writer.drain()
+    logging.debug(msg.get_frame().shape)
+    logging.debug("Sending http post")
+    resp = await self.session.post('http://localhost:8080', data=msg.marshal_json(), headers={'content-type': 'application/json'})
+    logging.debug(resp)
+
 
   def marshall_message(self, msg):
     '''

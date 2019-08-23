@@ -1,4 +1,6 @@
 import pickle
+import json
+import numpy as np
 
 class Message:
   def __init__(self):
@@ -68,8 +70,7 @@ class Message:
     :return:
     '''
     # Creates a sequence of bytes representing the message
-    bytes = None
-    return bytes
+    return json.dumps({"frame": self.frame.tolist(), "args": self.arguments})
 
   def unmarshal_json(self, bytes):
     '''
@@ -77,7 +78,9 @@ class Message:
     :return:
     '''
     # Constructs a message from a sequence of bytes
-    pass
+    data = json.loads(bytes)
+    self.frame = np.array(data["frame"])
+    self.arguments = data["args"]
 
   def marshal_pickle(self):
     '''

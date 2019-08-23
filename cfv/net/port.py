@@ -7,6 +7,9 @@ class InPort():
     '''
     self.callback = callback
 
+  def get_runners(self):
+    return []
+
 
 class OutPort():
   def __init__(self, nextPort):
@@ -14,4 +17,7 @@ class OutPort():
     General definition of outgoing port
     '''
     self.nextPort = nextPort
+
+  def get_runners(self):
+    return []
 

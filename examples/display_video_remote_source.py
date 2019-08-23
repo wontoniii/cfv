@@ -7,12 +7,15 @@ from cfv.net.remote_port import RemoteOutPort
 import logging
 
 async def run():
+  tasks = []
   source = video_source.VideoSource("../../vehicle_detection_haarcascades/dataset/video2.avi")
   op_source = RemoteOutPort("127.0.0.1", 8000)
   source.add_outgoing_port(op_source)
-
   await op_source.setup()
-  await source.run_async()
+
+  tasks.extend(op_source.get_runners())
+  tasks.append(asyncio.create_task(source.run_async()))
+  await asyncio.gather(*tasks)
 
 def main():
   logging.basicConfig(
