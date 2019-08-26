@@ -79,7 +79,7 @@ class Message:
     '''
     # Constructs a message from a sequence of bytes
     data = json.loads(bytes)
-    self.frame = np.array(data["frame"])
+    self.frame = np.array(data["frame"], dtype=np.uint8)
     self.arguments = data["args"]
 
   def marshal_pickle(self):

@@ -35,10 +35,8 @@ class RemoteInPort(InPort):
     #READ BODY
     logging.debug("Received new http post")
     json_body = await request.text()
-    # logging.debug(json_body)
     msg = Message()
     msg.unmarshal_json(json_body)
-    logging.debug(msg.get_frame().shape)
     await self.queue.put(msg)
     return web.Response(status=200)
 
@@ -116,9 +114,9 @@ class RemoteOutPort(OutPort):
     :param msg:
     :return:
     '''
-    logging.debug(msg.get_frame().shape)
+    print(type(msg.get_frame()), msg.get_frame().dtype)
     logging.debug("Sending http post")
-    resp = await self.session.post('http://localhost:8080', data=msg.marshal_json(), headers={'content-type': 'application/json'})
+    resp = await self.session.post('http://localhost:8080', data=msg.marshal_json(), headers={'content-type': 'application/json', 'CONNECTION': 'keep-alive'})
     logging.debug(resp)
 
 
