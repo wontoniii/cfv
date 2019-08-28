@@ -2,6 +2,7 @@ import asyncio
 import logging
 from cfv.net.port import InPort, OutPort
 from cfv.net.message import Message
+from cfv.utils.performance import Performance
 import aiohttp
 from aiohttp import web
 
@@ -27,16 +28,24 @@ class RemoteInPort(InPort):
 
     :return:
     '''
-    self.application = web.Application(client_max_size=1024*1024*10)
+    self.application = web.Application(client_max_size=1024*1024*20)
     self.application.add_routes([web.post('/', self.post)])
 
 
   async def post(self, request):
     #READ BODY
-    logging.debug("Received new http post")
+    logging.debug("Received new http post: {}".format(request.headers))
+    p = Performance()
+    p.start()
     json_body = await request.text()
+    p.end()
+    logging.debug("Receiving request took {}".format(p.timediff()))
     msg = Message()
+    p = Performance()
+    p.start()
     msg.unmarshal_json(json_body)
+    p.end()
+    logging.debug("Unmarshalling took {}".format(p.timediff()))
     await self.queue.put(msg)
     return web.Response(status=200)
 
@@ -95,7 +104,8 @@ class RemoteOutPort(OutPort):
     self.marshalling = marshalling
     self.remote_ip = remote_ip
     self.remote_port = remote_port
-    self.session = aiohttp.ClientSession()
+    self.queue = None
+    self.session = None
 
 
   async def setup(self):
@@ -104,7 +114,8 @@ class RemoteOutPort(OutPort):
 
     :return:
     '''
-    #send an empty message to setup the connection
+    self.queue = asyncio.Queue()
+    self.session = aiohttp.ClientSession()
 
 
   async def push(self, msg):
@@ -114,10 +125,31 @@ class RemoteOutPort(OutPort):
     :param msg:
     :return:
     '''
-    print(type(msg.get_frame()), msg.get_frame().dtype)
-    logging.debug("Sending http post")
-    resp = await self.session.post('http://localhost:8080', data=msg.marshal_json(), headers={'content-type': 'application/json', 'CONNECTION': 'keep-alive'})
-    logging.debug(resp)
+    await self.queue.put(msg)
+
+  def get_runners(self):
+    return [self.run()]
+
+  async def run(self):
+    while not self.canceled:
+      logging.debug("Create task for queue")
+      task = asyncio.create_task(self.queue.get())
+      msg = await task
+      logging.debug("Sending http post")
+
+      p = Performance()
+      p.start()
+      data = msg.marshal_json()
+      p.end()
+      logging.debug("Marshalling took {}".format(p.timediff()))
+
+      p = Performance()
+      p.start()
+      resp = await self.session.post('http://localhost:8080', data=data,
+                                     headers={'content-type': 'application/json', 'CONNECTION': 'keep-alive'})
+      p.end()
+      logging.debug("Seding request took {}".format(p.timediff()))
+      logging.debug(resp)
 
 
   def marshall_message(self, msg):

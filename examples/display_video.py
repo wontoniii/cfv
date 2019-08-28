@@ -10,7 +10,7 @@ def run():
   ip_sink = LocalInPort(sink.push)
   sink.add_incoming_port(ip_sink)
 
-  source = video_source.VideoSource("../../vehicle_detection_haarcascades/dataset/video2.avi")
+  source = video_source.VideoSource("data/chaplin.mp4")
   op_source = LocalOutPort(ip_sink)
   source.add_outgoing_port(op_source)
   source.run()
