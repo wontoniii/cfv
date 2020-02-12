@@ -10,6 +10,15 @@ class Function:
     self.outgoing = []
     self.incoming = []
 
+
+  def configure(self, config):
+    '''
+
+    :param config:
+    :return:
+    '''
+
+
   def add_outgoing_port(self, port):
     '''
 
@@ -45,6 +54,7 @@ class Function:
     '''
     logging.debug("Received frame at time {}".format(datetime.datetime.now().timestamp()))
 
+
   def run(self):
     '''
 
@@ -52,12 +62,14 @@ class Function:
     '''
     logging.warning("Nothing to run for this function")
 
+
   async def run_async(self):
     '''
 
     :return:
     '''
     logging.warning("Nothing to run for this function")
+
 
   def get_async_tasks(self):
     '''
