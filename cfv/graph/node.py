@@ -1,26 +1,43 @@
+import cfv.functions as functions
+import inspect
+
 class Node:
   def __init__(self):
     '''
 
     '''
     self.id = 0
-    self.fname = ""
-    self.params = {}
+    self.name = ""
+    self.type = ""
+    self.parameters = {}
 
-  def set_fname(self, name):
+
+  def set_name(self, name):
     '''
 
     :param name:
     :return:
     '''
-    self.fname = name
+    self.name = name
 
-  def get_fname(self):
+
+  def get_name(self):
     '''
 
     :return:
     '''
-    return self.fname
+    return self.name
+
+
+  def set_type(self, t):
+    '''
+
+    '''
+    if t not in inspect.getmembers(functions):
+      raise ValueError("Function type {} is not a valid function type".format(t))
+    else:
+      self.type = t
+
 
   def set_parameter(self, key, value):
     '''
@@ -29,7 +46,7 @@ class Node:
     :param value:
     :return:
     '''
-    self.params[key] = value
+    self.parameters[key] = value
 
   def get_parameter(self, key):
     '''
@@ -37,7 +54,7 @@ class Node:
     :param key:
     :return:
     '''
-    if key in self.params:
-      return self.params[key]
+    if key in self.parameters:
+      return self.parameters[key]
     else:
       return None
