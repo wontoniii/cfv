@@ -1,7 +1,5 @@
 from cfv.functions.function import Function
-from cfv.net.message import Message
 import logging
-import datetime
 
 class Discard(Function):
   def __init__(self):

@@ -9,7 +9,7 @@ import logging
 async def run():
   tasks = []
   source = video_source.VideoSource("data/chaplin.mp4")
-  op_source = RemoteOutPort("127.0.0.1", 8000)
+  op_source = RemoteOutPort("127.0.0.1", 8080)
   source.add_outgoing_port(op_source)
   await op_source.setup()
 
