@@ -21,7 +21,7 @@ class Graph:
     :return:
     '''
     with open(filename, "r") as f:
-      json_data = json.loads(f)
+      json_data = json.loads(f.read())
 
       if "nodes" not in json_data.keys():
         raise ValueError("No nodes configuration in the file")
@@ -35,6 +35,8 @@ class Graph:
         new_node.id = self.__last_vertex_id
         self.__last_vertex_id += 1
         new_node.configure(node)
+        self.__nodes.append(new_node)
+        self.__map_to_nodes[new_node.name.lower()] = new_node
 
 
   def get_node_by_id(self, id):
@@ -56,7 +58,7 @@ class Graph:
     '''
     if name.lower() not in self.__map_to_nodes.keys():
       raise ValueError("No node with that id")
-    return self.__nodes[self.__map_to_nodes[name.lower()]]
+    return self.__map_to_nodes[name.lower()]
 
 
   def iter_nodes(self):

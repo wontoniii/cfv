@@ -1,9 +1,10 @@
 import asyncio
+import logging
 from cfv.manager.graph import Graph
-from cfv.net.local_port import LocalInPort, LocalOutPort
-from cfv.net.remote_port import RemoteInPort, RemoteOutPort
+from cfv.net.local_port import *
+from cfv.net.remote_port import *
 
-import cfv.functions as functions
+from cfv.functions.functions_directory import get_class_by_name
 
 class LocalManager:
   '''
@@ -15,7 +16,7 @@ class LocalManager:
 
     '''
     self.graph = None
-    self.functions = []
+    self.functions = {}
     self.tasks = []
 
 
@@ -25,6 +26,7 @@ class LocalManager:
     :param filename: the pat to the json file to process
     :return:
     '''
+    logging.debug("Loading configuration file {}".format(filename))
     g = Graph()
     g.load_from_json(filename)
     self.graph = g
@@ -37,37 +39,44 @@ class LocalManager:
     '''
     for node in self.graph.iter_nodes():
       #initialize function
-      class_ = getattr(functions, node.get_name())
+      logging.debug("Working on node {}".format(node))
+      class_ = get_class_by_name(node.type)
+      logging.debug("Creating node {} of type {}".format(node.name, node.type))
       f = class_()
+      f.configure(node.parameters)
       #add and start ports
       for i in node.in_ports:
         port = node.in_ports[i]
         if True:  # TODO for the time being, everything is async
           if port.local:
-            p = LocalInPort(f.push_async)
+            p = LocalInPortAsync(f.push_async)
           else:
             p = RemoteInPort(f.push_async, port.local_ip, port.local_port)
           f.add_incoming_port(p)
         else:
           raise Exception("No support for synchronous ports yet")
 
+      self.functions[node.name] = f
+
+    for node in self.graph.iter_nodes():
+      f = self.functions[node.name]
       for i in node.out_ports:
         port = node.out_ports[i]
         other_edge = self.graph.get_node_by_name(port.remote_vertex_name).in_ports[port.remote_edge_id]
         if True:  # TODO for the time being, everything is async
           if port.local:
-            p = LocalOutPort(other_edge)
+            p = LocalOutPortAsync(other_edge)
           else:
             p = RemoteOutPort(other_edge.local_ip, other_edge.local_port)
           f.add_outgoing_port(p)
         else:
           raise Exception("No support for synchronous ports yet")
 
-      self.functions.append(f)
-
-    for f in self.functions:
+    for f in self.functions.values():
       to_add = f.get_async_tasks()
       if len(to_add) > 0:
         self.tasks.extend(to_add)
+
+    logging.debug("About to run tasks {}".format(self.tasks))
 
     await asyncio.gather(*self.tasks)

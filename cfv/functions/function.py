@@ -17,6 +17,7 @@ class Function:
     :param config:
     :return:
     '''
+    pass
 
 
   def add_outgoing_port(self, port):

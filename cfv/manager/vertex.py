@@ -1,5 +1,5 @@
 from cfv.manager.edge import Edge
-import cfv.functions as functions
+from cfv.functions.functions_directory import get_function_names
 import inspect
 
 class Vertex:
@@ -31,11 +31,16 @@ class Vertex:
       raise ValueError("Function type is required for all nodes")
     self.set_type(config["type"])
 
+    if "parameters" in config.keys():
+      self.parameters = config["parameters"]
+
     if "in_ports" in config.keys():
       for port in config["in_ports"]:
         edge = Edge()
         edge.configure(port)
+        print("Adding port {} to node {}".format(self.last_edge_id, self.name))
         self.add_in_port(self.last_edge_id, edge)
+        print(self.in_ports)
         self.last_edge_id += 1
 
     if "out_ports" in config.keys():
@@ -67,7 +72,8 @@ class Vertex:
     '''
 
     '''
-    if t not in inspect.getmembers(functions):
+    if t not in get_function_names():
+      # raise ValueError("Function type {} is not a valid function type. Valid function types are {}".format(t, inspect.getmembers(functions)))
       raise ValueError("Function type {} is not a valid function type".format(t))
     else:
       self.type = t

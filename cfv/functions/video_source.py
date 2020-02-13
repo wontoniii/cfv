@@ -8,12 +8,19 @@ import random
 import string
 
 class VideoSource(Function):
-  def __init__(self, video_src):
+  def __init__(self):
     '''
 
     '''
     Function.__init__(self)
-    self.video_source = video_src
+    self.video_source = ""
+
+
+  def configure(self, config):
+    if "source" not in config.keys():
+      raise ValueError("Missing source parameter")
+    self.video_source = config["source"]
+
 
   def push(self, msg):
     '''
@@ -78,3 +85,16 @@ class VideoSource(Function):
         return
       await self.outgoing[0].push(msg)
       # logging.debug("Finished waiting. I am {}".format(self.outgoing))
+
+
+  def get_async_tasks(self):
+    '''
+
+    :return:
+    '''
+    tasks = []
+    if len(self.incoming) > 0:
+      tasks = [asyncio.create_task(port.run()) for port in self.incoming]
+
+    tasks.extend([self.run_async()])
+    return tasks
