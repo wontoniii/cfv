@@ -16,7 +16,7 @@
       "type":"VideoSource",
       "name":"source",
       "parameters": {
-        "source": "data/chaplin.mp4"
+        "source": "data/video2.avi"
       },
       "in_ports": [],
       "out_ports": [

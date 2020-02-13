@@ -30,6 +30,7 @@ class VideoSource(Function):
     '''
     logging.warning("Received frame at time {}. This should not happen".format(datetime.datetime.now().timestamp()))
 
+
   def run(self):
     '''
 
@@ -55,11 +56,13 @@ class VideoSource(Function):
 
       self.outgoing[0].push(msg)
 
+
   async def run_async(self):
     '''
 
     :return:
     '''
+    logging.debug("Starting streaming of source {}".format(self.video_source))
     if not len(self.outgoing):
       logging.error("Not out ports set")
       return
@@ -68,8 +71,10 @@ class VideoSource(Function):
     cap = cv2.VideoCapture(self.video_source)
 
     async def read_frame():
+      logging.debug("Reading next frame from {}".format(self.video_source))
       ret, img = cap.read()
       if (type(img) == type(None)):
+        logging.warning("No frame left to read from {}.".format(self.video_source))
         return None
 
       logging.debug("Read frame. ret={}.".format(ret))

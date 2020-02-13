@@ -12,11 +12,16 @@ python3.7 -m pip install --user 'git+https://github.com/wontoniii/cfv.git'
 
 Add the `--upgrade` option to update to the latest version.
 
-## Running the included examples
-
-First clone the repository to your local device. Once in the repo folder, run:
+To install from the cloned source code, run:
 
 ```
-cd examples
-python3.7 vehicle_detection_haarcascades.py
+python3.7 -m pip install --user ./
+```
+
+## Running the included examples
+
+First clone the repository to your local device. From the root folder of the repository run:
+
+```
+python3.7 examples/display_video.json
 ```

@@ -63,9 +63,10 @@ class LocalManager:
       for i in node.out_ports:
         port = node.out_ports[i]
         other_edge = self.graph.get_node_by_name(port.remote_vertex_name).in_ports[port.remote_edge_id]
+        other_port = self.functions[port.remote_vertex_name].incoming[port.remote_edge_id]
         if True:  # TODO for the time being, everything is async
           if port.local:
-            p = LocalOutPortAsync(other_edge)
+            p = LocalOutPortAsync(other_port)
           else:
             p = RemoteOutPort(other_edge.local_ip, other_edge.local_port)
           f.add_outgoing_port(p)
