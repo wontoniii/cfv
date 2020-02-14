@@ -20,7 +20,7 @@ def main():
 
   local_manager = LocalManager()
   local_manager.process_config_json(args["config"])
-  asyncio.run(local_manager.start_functions())
+  asyncio.run(local_manager.start())
 
 
 if __name__== "__main__":

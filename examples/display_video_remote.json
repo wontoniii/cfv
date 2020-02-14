@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "type":"VideoDisplaySink",
+      "name":"sink",
+      "parameters": {},
+      "in_ports": [
+        {
+          "local": false,
+          "id": 0,
+          "local_ip": "127.0.0.1",
+          "local_port": 8080
+        }
+      ],
+      "out_ports": []
+    },
+    {
+      "type":"VideoSource",
+      "name":"source",
+      "parameters": {
+        "source": "data/video2.avi"
+      },
+      "in_ports": [],
+      "out_ports": [
+        {
+          "local": false,
+          "id": 0,
+          "remote_ip": "127.0.0.1",
+          "remote_port": 8080
+        }
+      ]
+    }
+  ]
+}

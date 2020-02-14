@@ -22,7 +22,7 @@ class VideoSource(Function):
     self.video_source = config["source"]
 
 
-  def push(self, msg):
+  def push(self, id, msg):
     '''
 
     :param port:

@@ -15,6 +15,8 @@ class Edge:
     self.local_port = 8080
     self.remote_vertex_name = ""
     self.remote_edge_id = 0
+    self.remote_ip = ""
+    self.remote_port = 0
 
   def configure(self, config):
     '''
@@ -38,3 +40,7 @@ class Edge:
       self.remote_vertex_name = config["remote_vertex_name"]
     if "remote_edge_id" in config.keys():
       self.remote_edge_id = config["remote_edge_id"]
+    if "remote_ip" in config.keys():
+      self.remote_ip = config["remote_ip"]
+    if "remote_port" in config.keys():
+      self.remote_port = config["remote_port"]
