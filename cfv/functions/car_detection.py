@@ -4,12 +4,18 @@ import datetime
 import cv2
 
 class CarDetection(Function):
-  def __init__(self, cascade_src):
+  def __init__(self):
     '''
 
     '''
     Function.__init__(self)
-    self.car_cascade = cv2.CascadeClassifier(cascade_src)
+
+
+  def configure(self, config):
+    if "data" not in config.keys():
+      raise ValueError("Missing data parameter")
+    self.car_cascade = cv2.CascadeClassifier(config["data"])
+
 
   async def push(self, id, msg):
     '''

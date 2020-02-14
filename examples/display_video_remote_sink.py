@@ -2,19 +2,19 @@ import sys
 sys.path.append("../")
 import asyncio
 
-from cfv.functions import sink
+from cfv.functions.sink import Sink
 from cfv.net.remote_port import RemoteInPort
 import logging
 
 async def run():
   tasks = []
-  sink = sink.VideoSink()
-  ip_sink = RemoteInPort(sink.push_async, "127.0.0.1", 8000)
+  sink = Sink()
+  ip_sink = RemoteInPort(sink.push, "127.0.0.1", 8000)
   sink.add_incoming_port(ip_sink)
   await ip_sink.setup()
 
   tasks.extend(ip_sink.get_runners())
-  tasks.append(asyncio.create_task(sink.run_async()))
+  tasks.append(asyncio.create_task(sink.run()))
   await asyncio.gather(*tasks)
 
 def main():

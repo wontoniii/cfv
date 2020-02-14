@@ -2,13 +2,14 @@ import sys
 sys.path.append("../")
 import asyncio
 
-from cfv.functions import video_source, video_display_sink
+from cfv.functions import video_source
 from cfv.net.remote_port import RemoteOutPort
 import logging
 
 async def run():
   tasks = []
-  source = video_source.VideoSource("data/chaplin.mp4")
+  source = video_source.VideoSource()
+  source.configure({"source": "../data/chaplin.mp4"})
   op_source = RemoteOutPort("127.0.0.1", 8080)
   source.add_outgoing_port(op_source)
   await op_source.setup()

@@ -46,13 +46,12 @@ class RemoteInPort(InPort):
 
 
   def get_runners(self):
-    runners = [self.run()]
-    runners.extend(self.server.get_runners())
-    return runners
+    return self.server.get_runners() + [self.run()]
 
 
   async def received(self, msg):
     await self.queue.put(msg)
+
 
   async def run(self):
     while not self.canceled:
@@ -120,15 +119,15 @@ class RemoteOutPort(OutPort):
     '''
     await self.queue.put(msg)
 
+
   def get_runners(self):
     return [self.run()]
 
+
   async def run(self):
     while not self.canceled:
-      logging.debug("Create task for queue")
       task = asyncio.create_task(self.queue.get())
       msg = await task
-      logging.debug("Sending http post")
       await self.server.send(msg)
 
 
