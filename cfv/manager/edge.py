@@ -10,6 +10,7 @@ class Edge:
     self.id = 0
     self.remote_id = 0
     self.local = True
+    self.asynchronous = True
     self.local_ip = "0.0.0.0"
     self.local_port = 8080
     self.remote_vertex_name = ""
@@ -21,6 +22,10 @@ class Edge:
     :param config:
     :return:
     '''
+    if "local" in config.keys():
+      self.local = config["local"]
+    if "async" in config.keys():
+      self.asynchronous = config["async"]
     if "id" in config.keys():
       self.id = config["id"]
     if "remote_id" in config.keys():

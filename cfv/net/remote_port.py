@@ -4,16 +4,15 @@ import logging
 from cfv.net.port import InPort, OutPort
 from cfv.net.message import Message
 from cfv.net.http import HTTPServer, HTTPClient
-from cfv.utils.performance import Performance
 
 
 class RemoteInPort(InPort):
 
-  def __init__(self, callback, host, port, marshalling="pickle", protocol="http"):
+  def __init__(self, id, callback, host, port, marshalling="pickle", protocol="http"):
     '''
 
     '''
-    InPort.__init__(self, callback)
+    InPort.__init__(self, id, callback)
     self.canceled = False
     self.connected = False
     self.marshalling = marshalling.lower()
@@ -49,7 +48,6 @@ class RemoteInPort(InPort):
   def get_runners(self):
     runners = [self.run()]
     runners.extend(self.server.get_runners())
-
     return runners
 
 
@@ -62,7 +60,7 @@ class RemoteInPort(InPort):
       task = asyncio.create_task(self.queue.get())
       msg = await task
       logging.debug("Read message from queue")
-      await self.callback(msg)
+      await self.callback(self.id, msg)
 
 
   def unmarshall_message(self, data):
@@ -85,11 +83,11 @@ class RemoteInPort(InPort):
 
 
 class RemoteOutPort(OutPort):
-  def __init__(self, remote_ip, remote_port, marshalling="pickle", protocol="http"):
+  def __init__(self, id, remote_ip, remote_port, marshalling="pickle", protocol="http"):
     '''
 
     '''
-    OutPort.__init__(self, None)
+    OutPort.__init__(self, id, None)
     self.canceled = False
     self.marshalling = marshalling
     self.remote_ip = remote_ip

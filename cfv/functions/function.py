@@ -38,7 +38,7 @@ class Function:
     self.incoming.append(port)
 
 
-  def push(self, frame):
+  async def push(self, id, frame):
     '''
 
     :param port:
@@ -47,24 +47,7 @@ class Function:
     logging.debug("Received frame at time {}".format(datetime.datetime.now().timestamp()))
 
 
-  async def push_async(self, frame):
-    '''
-
-    :param port:
-    :return:
-    '''
-    logging.debug("Received frame at time {}".format(datetime.datetime.now().timestamp()))
-
-
-  def run(self):
-    '''
-
-    :return:
-    '''
-    logging.warning("Nothing to run for this function")
-
-
-  async def run_async(self):
+  async def run(self):
     '''
 
     :return:
@@ -77,7 +60,8 @@ class Function:
 
     :return:
     '''
-    #I guess it should start all incoming ports?
-    if len(self.incoming) > 0:
-      return [asyncio.create_task(port.run()) for port in self.incoming]
+    tasks = []
+    for port in self.incoming + self.outgoing:
+      tasks += port.get_runners()
+    return tasks
 

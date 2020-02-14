@@ -31,33 +31,7 @@ class VideoSource(Function):
     logging.warning("Received frame at time {}. This should not happen".format(datetime.datetime.now().timestamp()))
 
 
-  def run(self):
-    '''
-
-    :return:
-    '''
-    if not len(self.outgoing):
-      logging.error("Not out ports set")
-      return
-
-    flow_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-    logging.info("Generating flow {}".format(flow_id))
-    cap = cv2.VideoCapture(self.video_source)
-
-    while True:
-      ret, img = cap.read()
-      if (type(img) == type(None)):
-        break
-
-      logging.debug("Read frame. ret={}".format(ret))
-      msg = Message()
-      msg.set_frame(img)
-      msg.set_argument("flow_id", flow_id)
-
-      self.outgoing[0].push(msg)
-
-
-  async def run_async(self):
+  async def run(self):
     '''
 
     :return:
@@ -89,7 +63,6 @@ class VideoSource(Function):
       if msg is None:
         return
       await self.outgoing[0].push(msg)
-      # logging.debug("Finished waiting. I am {}".format(self.outgoing))
 
 
   def get_async_tasks(self):
@@ -97,9 +70,4 @@ class VideoSource(Function):
 
     :return:
     '''
-    tasks = []
-    if len(self.incoming) > 0:
-      tasks = [asyncio.create_task(port.run()) for port in self.incoming]
-
-    tasks.extend([self.run_async()])
-    return tasks
+    return Function.get_async_tasks(self) + [self.run()]

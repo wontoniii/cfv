@@ -6,61 +6,69 @@ class LocalInPort(InPort):
   '''
   Incoming port that uses local queues to handle message passing.
   '''
-  def __init__(self, callback):
+  def __init__(self, id, callback, asynchronous=True):
     '''
-    Instantiate a new porrt and set the callback call
+    Instantiate a new port and set the callback call
+    :param id: Port identifier
     :param callback: Function to call when a new message is received
+    :param asynchronous: Whether to run the port in asynchronous mode
     '''
-    InPort.__init__(self, callback)
+    InPort.__init__(self, id, callback)
+    self.asynchronous = asynchronous
+    if self.asynchronous:
+      self.queue = asyncio.Queue()
+    else:
+      self.queue = None
+    self.canceled = False
 
-  def push(self, msg):
+  async def push(self, msg):
     '''
     Pass a message into the port
     :param msg: Message to pass
     :return:
     '''
-    self.callback(msg)
-
-
-class LocalInPortAsync(InPort):
-  def __init__(self, callback):
-    '''
-
-    '''
-    InPort.__init__(self, callback)
-    self.queue = asyncio.Queue()
-    self.canceled = False
-
-  async def push(self, msg):
-    self.queue.put_nowait(msg)
+    if self.asynchronous:
+      self.queue.put_nowait(msg)
+    else:
+      await self.callback(self.id, msg)
 
   async def run(self):
+    '''
+    Control loop to continously read messages in queue
+    :return:
+    '''
     while not self.canceled:
       task = asyncio.create_task(self.queue.get())
       msg = await task
-      await self.callback(msg)
+      await self.callback(self.id, msg)
 
-
+  def get_runners(self):
+    '''
+    Get the tasks to run in asynchronous mode
+    :return: self.run if is asynchronous
+    '''
+    if self.asynchronous:
+      return [self.run()]
+    else:
+      return []
 
 
 class LocalOutPort(OutPort):
-  def __init__(self, nextPort):
+  def __init__(self, id, nextPort, asynchronous=True):
     '''
 
+    :param id: Port identifier
+    :param nextPort: InPort to send messages to
+    :param asynchronous: Whether to run the port in asynchronous mode
     '''
-    OutPort.__init__(self, nextPort)
+    OutPort.__init__(self, id, nextPort)
+    self.asynchronous = asynchronous
 
-  def push(self, msg):
-    self.nextPort.push(msg)
-
-
-class LocalOutPortAsync(OutPort):
-  def __init__(self, nextPort):
-    '''
-
-    '''
-    OutPort.__init__(self, nextPort)
 
   async def push(self, msg):
-    # print("I'm the out port {}  --{}".format(self.nextPort, self.nextPort.push))
+    '''
+    Pass a message to the next port
+    :param msg: Message to pass
+    :return:
+    '''
     await self.nextPort.push(msg)

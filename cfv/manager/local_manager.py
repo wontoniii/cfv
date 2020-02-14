@@ -47,14 +47,19 @@ class LocalManager:
       #add and start ports
       for i in node.in_ports:
         port = node.in_ports[i]
-        if True:  # TODO for the time being, everything is async
+        if port.asynchronous:  # TODO for the time being, everything is async
           if port.local:
-            p = LocalInPortAsync(f.push_async)
+            p = LocalInPort(port.id, f.push, asynchronous=True)
           else:
-            p = RemoteInPort(f.push_async, port.local_ip, port.local_port)
+            p = RemoteInPort(port.id, f.push, port.local_ip, port.local_port)
           f.add_incoming_port(p)
         else:
-          raise Exception("No support for synchronous ports yet")
+          if port.local:
+            p = LocalInPort(port.id, f.push, asynchronous=False)
+          else:
+            raise Exception("Remote ports can not be synchronous")
+          f.add_incoming_port(p)
+
 
       self.functions[node.name] = f
 
@@ -64,20 +69,24 @@ class LocalManager:
         port = node.out_ports[i]
         other_edge = self.graph.get_node_by_name(port.remote_vertex_name).in_ports[port.remote_edge_id]
         other_port = self.functions[port.remote_vertex_name].incoming[port.remote_edge_id]
-        if True:  # TODO for the time being, everything is async
+        if port.asynchronous:  # TODO for the time being, everything is async
           if port.local:
-            p = LocalOutPortAsync(other_port)
+            p = LocalOutPort(port.id, other_port, asynchronous=True)
           else:
-            p = RemoteOutPort(other_edge.local_ip, other_edge.local_port)
+            p = RemoteOutPort(port.id, other_edge.local_ip, other_edge.local_port)
           f.add_outgoing_port(p)
         else:
-          raise Exception("No support for synchronous ports yet")
+          if port.local:
+            p = LocalOutPort(port.id, other_port, asynchronous=False)
+          else:
+            raise Exception("Remote ports can not be synchronous")
+          f.add_outgoing_port(p)
 
     for f in self.functions.values():
       to_add = f.get_async_tasks()
       if len(to_add) > 0:
         self.tasks.extend(to_add)
 
-    logging.debug("About to run tasks {}".format(self.tasks))
-
-    await asyncio.gather(*self.tasks)
+    if len(self.tasks) > 0:
+      logging.debug("About to run tasks {}".format(self.tasks))
+      await asyncio.gather(*[asyncio.create_task(task) for task in self.tasks])

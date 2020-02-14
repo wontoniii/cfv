@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "type":"VideoSink",
+      "type":"VideoDisplaySink",
       "name":"sink",
       "parameters": {},
       "in_ports": [

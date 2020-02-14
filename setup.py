@@ -18,4 +18,5 @@ setup(name='cfv',
             'asyncio',
             'opencv-python'
       ],
+      scripts=['cfv.py']
       )

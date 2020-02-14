@@ -1,23 +1,43 @@
 import asyncio
 
 class InPort():
-  def __init__(self, callback):
+  '''
+  General definition of incoming port
+  '''
+  def __init__(self, id, callback):
     '''
-    General definition of incoming port
+
+    :param id: Port identifier
+    :param callback: Callback function to call when receiving a new message
     '''
+    self.id = id
     self.callback = callback
 
   def get_runners(self):
+    '''
+    Get the tasks to run in asynchronous mode
+    :return: []
+    '''
     return []
 
 
 class OutPort():
-  def __init__(self, nextPort):
+  '''
+  General definition of outgoing port
+  '''
+  def __init__(self, id, nextPort):
     '''
-    General definition of outgoing port
+
+    :param id: Port identifier
+    :param nextPort: InPort to send messages to
     '''
+    self.id = id
     self.nextPort = nextPort
 
   def get_runners(self):
+    '''
+    Get the tasks to run in asynchronous mode
+    :return: []
+    '''
     return []
 
