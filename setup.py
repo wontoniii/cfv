@@ -16,7 +16,8 @@ setup(name='cfv',
       ],
       install_requires=[
             'asyncio',
-            'opencv-python'
+            'opencv-python',
+            'aiohttp'
       ],
       scripts=['cfv.py']
       )
