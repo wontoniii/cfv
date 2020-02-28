@@ -40,12 +40,22 @@ class RemoteInPort(InPort):
     await self.server.setup()
 
 
-  def is_connected(self):
+  def is_ready(self):
     '''
-    Wait until connection is established
+    Check if server is ready
+    
     :return:
     '''
-    return self.server.is_connected()
+    return self.server.is_ready()
+
+  
+  async def wait_ready(self):
+    '''
+    '''
+    while not self.is_ready():
+      print("Not ready yet, waiting 0.1s")
+      await asyncio.create_task(asyncio.sleep(0.1))
+
 
 
   def get_runners(self):
@@ -126,7 +136,7 @@ class RemoteOutPort(OutPort):
 
 
   def get_runners(self):
-    return [self.run()]
+    return self.server.get_runners() + [self.run()]
 
 
   async def run(self):

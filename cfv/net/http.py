@@ -12,11 +12,13 @@ class HTTPServer:
     self.host = host
     self.port = port
     self.application = None
+    self.ready = False
     self.callback = callback
 
   async def setup(self):
     self.application = web.Application(client_max_size=HTTPServer.CLIENT_MAX_SIZE)
     self.application.add_routes([web.post('/', self.post)])
+    self.application.on_startup.append(self.set_ready)
 
   async def post(self, request):
     # READ BODY
@@ -38,13 +40,17 @@ class HTTPServer:
   def get_runners(self):
     return [web._run_app(self.application, access_log=None, print=logging.debug)]
 
-  def is_connected(self):
+  async def set_ready(self, app):
+    logging.debug("Server is ready")
+    self.ready = True
+
+  def is_ready(self):
     '''
-    Wait until connection is established
+    Check if server is ready
+    
     :return:
     '''
-    #TODO
-    return True
+    return self.ready
 
 
 class HTTPClient:
@@ -62,6 +68,9 @@ class HTTPClient:
     :return:
     '''
     self.session = aiohttp.ClientSession()
+
+  def get_runners(self):
+    return []
 
   async def send(self, msg):
     p = Performance()

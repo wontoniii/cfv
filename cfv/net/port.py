@@ -20,6 +20,12 @@ class InPort():
     '''
     return []
 
+  def is_ready(self):
+    '''
+    Check if a port is ready
+    '''
+    return True
+
 
 class OutPort():
   '''
@@ -40,4 +46,10 @@ class OutPort():
     :return: []
     '''
     return []
+
+  def is_ready(self):
+    '''
+    Check if a port is ready
+    '''
+    return True
 
