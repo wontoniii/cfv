@@ -36,7 +36,7 @@ class HTTPServer:
     return web.Response(status=200)
 
   def get_runners(self):
-    return [web._run_app(self.application)]
+    return [web._run_app(self.application, access_log=None, print=logging.debug)]
 
   def is_connected(self):
     '''

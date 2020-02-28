@@ -17,6 +17,8 @@ class Edge:
     self.remote_edge_id = 0
     self.remote_ip = ""
     self.remote_port = 0
+    self.protocol = "http"
+    self.marshalling = "json"
 
   def configure(self, config):
     '''
@@ -44,3 +46,7 @@ class Edge:
       self.remote_ip = config["remote_ip"]
     if "remote_port" in config.keys():
       self.remote_port = config["remote_port"]
+    if "protocol" in config.keys():
+      self.protocol = config["protocol"]
+    if "marshalling" in config.keys():
+      self.marshalling = config["marshalling"]

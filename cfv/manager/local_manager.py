@@ -61,7 +61,7 @@ class LocalManager:
           if port.local:
             p = LocalInPort(port.id, f.push, asynchronous=True)
           else:
-            p = RemoteInPort(port.id, f.push, port.local_ip, port.local_port)
+            p = RemoteInPort(port.id, f.push, port.local_ip, port.local_port, marshalling=port.marshalling, protocol=port.protocol)
             await p.setup()
           f.add_incoming_port(p)
         else:
@@ -81,12 +81,12 @@ class LocalManager:
       f = self.functions[node.name]
       for i in node.out_ports:
         port = node.out_ports[i]
-        if port.asynchronous:  # TODO for the time being, everything is async
+        if port.asynchronous:
           if port.local:
             other_port = self.functions[port.remote_vertex_name].incoming[port.remote_edge_id]
             p = LocalOutPort(port.id, other_port, asynchronous=True)
           else:
-            p = RemoteOutPort(port.id, port.remote_ip, port.remote_port)
+            p = RemoteOutPort(port.id, port.remote_ip, port.remote_port, marshalling=port.marshalling, protocol=port.protocol)
             await p.setup()
           f.add_outgoing_port(p)
         else:

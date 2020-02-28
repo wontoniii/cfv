@@ -9,7 +9,9 @@
           "local": false,
           "id": 0,
           "local_ip": "127.0.0.1",
-          "local_port": 8080
+          "local_port": 8080,
+          "marshalling": "json",
+          "protocol": "websocket"
         }
       ],
       "out_ports": []
@@ -26,7 +28,9 @@
           "local": false,
           "id": 0,
           "remote_ip": "127.0.0.1",
-          "remote_port": 8080
+          "remote_port": 8080,
+          "marshalling": "json",
+          "protocol": "websocket"
         }
       ]
     }

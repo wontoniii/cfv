@@ -23,5 +23,5 @@ python3.7 -m pip install --user ./
 First clone the repository to your local device. From the root folder of the repository run:
 
 ```
-python3.7 examples/display_video.json
+python3.7 cfv.py examples/display_video.json
 ```

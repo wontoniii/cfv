@@ -4,6 +4,7 @@ import logging
 from cfv.net.port import InPort, OutPort
 from cfv.net.message import Message
 from cfv.net.http import HTTPServer, HTTPClient
+from cfv.net.websocket import WebSocketServer, WebSocketClient
 
 
 class RemoteInPort(InPort):
@@ -31,6 +32,8 @@ class RemoteInPort(InPort):
     '''
     if self.protocol == "http":
       self.server = HTTPServer(self.host, self.port, self.received)
+    elif self.protocol == "websocket":
+      self.server = WebSocketServer(self.host, self.port, self.received)
     else:
       raise TypeError("{} is an invalid connection protocol".format(self.protocol))
 
@@ -104,6 +107,8 @@ class RemoteOutPort(OutPort):
     self.queue = asyncio.Queue()
     if self.protocol == "http":
       self.server = HTTPClient(self.remote_ip, self.remote_port)
+    elif self.protocol == "websocket":
+      self.server = WebSocketClient(self.remote_ip, self.remote_port)
     else:
       raise TypeError("{} is an invalid connection protocol".format(self.protocol))
 
