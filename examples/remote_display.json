@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "type":"VideoDisplaySink",
+      "name":"sink",
+      "parameters": {},
+      "in_ports": [
+        {
+          "local": false,
+          "id": 0,
+          "local_ip": "127.0.0.1",
+          "local_port": 8080,
+          "marshalling": "pickle",
+          "protocol": "websocket"
+        }
+      ],
+      "out_ports": []
+    }
+  ]
+}
