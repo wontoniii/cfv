@@ -24,7 +24,7 @@ class WebSocketServer:
     # READ BODY
     logging.debug("Received new socket connection: {}".format(request.headers))
 
-    ws = web.WebSocketResponse()
+    ws = web.WebSocketResponse(max_msg_size=0)
     await ws.prepare(request)
 
     async for websocket_message in ws:
